@@ -25,7 +25,7 @@ while IFS= read -r -n1 -d '' ch; do
     [[ "$CHARS_LEFT" -le 0 ]] && break
 done
 
-echo "Attempting to send mail to address $TO_EMAIL" >/root/logpipe
+echo "Sending mail to address '$TO_EMAIL'" >/root/logpipe
 /usr/sbin/ssmtp "$TO_EMAIL" <<<"$BODY" >/root/logpipe 2>/root/logpipe
 
 echo 'HTTP/1.1 204 No Content'
