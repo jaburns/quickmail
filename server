@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+read -r line
+echo "Incoming request: $line" >/root/logpipe
+if [[ "$line" != *'POST /'* ]]; then
+    echo 'Ignoring non-POST request' >/root/logpipe
+    echo 'HTTP/1.1 500 Internal Server Error'
+    exit 0
+fi
+TO_EMAIL="$(echo "$line" | grep -Po '/.*? ' | grep -o '[^/].*[^ ]')"
+
+CHARS_LEFT=0
+while read -r line; do
+    line="${line%%$'\r'}"
+    [[ -z "$line" ]] && break;
+    if [[ "$line" == 'Content-Length:'* ]]; then
+        CHARS_LEFT="${line//Content-Length: /}"
+    fi
+done
+
+BODY=
+while IFS= read -r -n1 -d '' ch; do
+    BODY="${BODY}${ch}"
+    ((CHARS_LEFT--))
+    [[ "$CHARS_LEFT" -le 0 ]] && break
+done
+
+echo "Attempting to send mail to address $TO_EMAIL" >/root/logpipe
+/usr/sbin/ssmtp "$TO_EMAIL" <<<"$BODY" >/root/logpipe 2>/root/logpipe
+
+echo 'HTTP/1.1 204 No Content'

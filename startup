@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+[[ -z "$MAILHUB" ]] && MAILHUB='smtp.gmail.com:587'
+
+cat >/etc/ssmtp/ssmtp.conf <<EOF
+root=$EMAIL
+mailhub=$MAILHUB
+AuthUser=$EMAIL
+AuthPass=$PASSWORD
+UseTLS=YES
+UseSTARTTLS=YES
+hostname=localhost
+FromLineOverride=YES
+EOF
+
+echo "root:$EMAIL:$MAILHUB" >/etc/ssmtp/revaliases
+
+mkfifo /root/logpipe
+socat TCP4-LISTEN:80,fork EXEC:/root/server &
+echo 'Server started'
+tail -f /root/logpipe
