@@ -13,7 +13,7 @@ docker run -itd \
     -p 8888:80                    \  # The app runs on port 80 inside the container
     quickmail
 ```
-Troubleshooting gmail account not working with ssmtp: http://serverfault.com/questions/635139/how-to-fix-send-mail-authorization-failed-534-5-7-14
+Troubleshooting gmail account not working with ssmtp: http://serverfault.com/a/672182
 
 Usage example with curl
 ```
