@@ -7,7 +7,7 @@ if [[ "$line" != *'POST /'* ]]; then
     echo 'HTTP/1.1 500 Internal Server Error'
     exit 0
 fi
-TO_EMAIL="$(echo "$line" | grep -Po '/.*? ' | grep -o '[^/].*[^ ]')"
+TO_EMAIL="$(echo "$line" | cut -d' ' -f2 | cut -d/ -f2)"
 
 CHARS_LEFT=0
 while read -r line; do

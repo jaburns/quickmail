@@ -1,7 +1,7 @@
-FROM debian:jessie
+FROM alpine
 
-RUN apt-get update && apt-get install -y \
-    ssmtp socat
+RUN apk add --update bash socat ssmtp
+RUN rm -rf /var/cache/apk/*
 
 COPY startup /root/
 COPY server /root/
